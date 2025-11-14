@@ -8,7 +8,7 @@ Currently, Ollama Llama3.1 is used as the Language Model (LM). This requires Oll
 
 # How to Use
 1. Create a `data` directory in the same folder as this README.
-2. Copy your own documents (.pdf, .txt, .docx, .tex) to the newly created `data` folder. Use subfolders to group files. These groups will be called datasets.
+2. Copy your own files (.pdf, .txt, .docx, .tex) to the newly created `data` folder. Use subfolders to group the files. These groups will be called datasets.
 3. Run `python personalChatbot.py --dataset DATASET`, where `DATASET` is a placeholder for the name of the subfolder.
 4. Repeatedly ask questions (queries) about the documents in the `data/DATASET` folder.
 5. [Optional] Check the automatically created `logs/DATASET` folder for the documents which are the most similar to the query. This is the context used to answer the question.

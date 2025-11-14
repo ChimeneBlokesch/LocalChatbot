@@ -5,6 +5,10 @@ from langchain_core.documents.base import Document
 
 
 def load_file(file: str) -> list[Document]:
+    """
+    Use document loaders to read the file as document. Also splits the file
+    into multiple documents, depending on the chunk size.
+    """
     loader = None
     splitter = None
 
@@ -32,6 +36,7 @@ def load_file(file: str) -> list[Document]:
     docs = loader.load()
 
     if splitter is not None:
+        # Split the file into multiple document chunks
         docs = splitter.split_documents(docs)
 
     return docs

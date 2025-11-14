@@ -53,9 +53,14 @@ class PersonalChatbot:
         self.query_id = 0
 
     def setup_llm(self) -> Ollama:
+        """
+        Create the language model using Ollama
+        """
         llm = Ollama(
             model=self.llm_model_name,
             request_timeout=360.0,
+            # Limit window to avoid having too low system memory
+            # to load the model
             context_window=1024,
         )
         Settings.llm = llm
@@ -63,21 +68,32 @@ class PersonalChatbot:
         return llm
 
     def load_docs(self) -> list[Document]:
-        docs = []
+        """
+        Search the dataset folder for the input files
+        """
+        docs: list[Document] = []
+
         for file in os.listdir(self.docs_folder):
             new_docs = utils.load_file(os.path.join(self.docs_folder, file))
             docs += new_docs
-            print(len(docs), len(new_docs))
 
         return docs
 
     def store_local_embeddings(self, docs: list[Document]) -> Chroma:
+        """
+        Convert the documents to local embeddings and store them in the
+        Chroma folder.
+        """
         vector_store = Chroma.from_documents(
             docs, self.embeddings, persist_directory=self.chroma_folder)
 
         return vector_store
 
-    def query_rag(self, query: str) -> str:
+    def query_rag(self, query: str) -> tuple[str, str]:
+        """
+        Input a prompt to the LM, where the most similar documents
+        are also given to the LM as context.
+        """
         db = Chroma(persist_directory=self.chroma_folder,
                     embedding_function=self.embeddings)
 
@@ -88,7 +104,7 @@ class PersonalChatbot:
 
         self.log_results(results)
 
-        # Combine context from matching documents
+        # Combine the matching documents to obtain the context
         context_text = "\n\n - -\n\n".join(
             [doc.page_content for doc, _score in results])
 
@@ -111,6 +127,10 @@ class PersonalChatbot:
         return formatted_response, response_text
 
     def log_results(self, results: list[tuple[Document, float]]) -> None:
+        """
+        Write the similar documents and their similarity score to a file
+        in the logs folder. Uses the query id as the filename.
+        """
         os.makedirs(self.log_folder, exist_ok=True)
 
         file = os.path.join(self.log_folder, f"{self.query_id}.txt")
@@ -126,8 +146,8 @@ class PersonalChatbot:
             # Percentage of the result with the highest score
             best_score = results[0][1] * 100
 
-            f.write(
-                f"The best result has a similarity score of {best_score:2f}%")
+            f.write("The best result has a similarity score of "
+                    f"{best_score:2f}%")
 
 
 if __name__ == "__main__":
