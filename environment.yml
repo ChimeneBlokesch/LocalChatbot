@@ -1,0 +1,7 @@
+name: personalGPT
+dependencies:
+  - python==3.10.6
+  - anaconda
+  - pip
+  - pip:
+    - -r requirements.txt
