@@ -1,4 +1,4 @@
-name: personalGPT
+name: personalChatbot
 dependencies:
   - python==3.10.6
   - anaconda
