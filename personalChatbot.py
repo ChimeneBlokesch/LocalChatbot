@@ -67,6 +67,7 @@ class PersonalChatbot:
         for file in os.listdir(self.docs_folder):
             new_docs = utils.load_file(os.path.join(self.docs_folder, file))
             docs += new_docs
+            print(len(docs), len(new_docs))
 
         return docs
 
@@ -80,7 +81,7 @@ class PersonalChatbot:
         db = Chroma(persist_directory=self.chroma_folder,
                     embedding_function=self.embeddings)
 
-        results = db.similarity_search_with_relevance_scores(query, k=10)
+        results = db.similarity_search_with_relevance_scores(query, k=50)
 
         if len(results) == 0:
             print("Unable to find matching results.")
@@ -116,7 +117,7 @@ class PersonalChatbot:
 
         with open(file, "w", encoding="utf-8") as f:
             for i, (doc, score) in enumerate(results):
-                f.write(f"Result {i} with score {score}")
+                f.write(f"Result {i} with score {score}\n")
                 f.write(doc.page_content)
                 f.write("\n")
 
