@@ -5,6 +5,14 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents.base import Document
 
 
+def has_extension(file: str, extensions: list[str]):
+    for ext in extensions:
+        if file.endswith(ext):
+            return True
+
+    return False
+
+
 def load_file(file: str) -> list[Document]:
     """
     Use document loaders to read the file as document. Also splits the file
@@ -13,7 +21,7 @@ def load_file(file: str) -> list[Document]:
     loader = None
     splitter = None
 
-    if file.endswith(".tex") or file.endswith(".txt"):
+    if has_extension(file, [".txt", ".tex", ".md"]):
         loader = TextLoader(file, encoding='UTF-8')
 
         splitter = RecursiveCharacterTextSplitter(
